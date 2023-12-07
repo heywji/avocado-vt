@@ -149,7 +149,7 @@ def prepare_netkvmco(vm):
 
     param vm: the target vm
     """
-    LOG.info("Prepare the environment to run netkvmco.exe")
+    LOG.info("Prepare the environment to run netkvmco")
     session = vm.wait_for_login(timeout=360)
     try:
         get_netkvmco_path = _get_netkvmco_path(session)

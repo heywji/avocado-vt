@@ -135,10 +135,11 @@ def _get_netkvmco_path(session):
     for file_type in ["netkvmco.dll", "netkvmco.exe"]:
         find_cmd = 'dir /b /s "%s" | findstr "%s" | findstr "%s"' \
                                % (viowin_ltr, middle_path, file_type)
-        if file_type.endswith(".dll"):
-            netkvmco_path = session.cmd(find_cmd).strip()
-            netkvmco_path = netkvmco_path.split("\n")[0].strip()
-            LOG.info("Found %s file at %s" % (file_type, netkvmco_path))
+        netkvmco_path = session.cmd(find_cmd)
+        if not netkvmco_path:
+            continue
+        netkvmco_path = netkvmco_path.strip().split("\n")[0]
+        LOG.info("Found %s file at %s" % (file_type, netkvmco_path))
         return netkvmco_path
 
 def prepare_netkvmco(vm):

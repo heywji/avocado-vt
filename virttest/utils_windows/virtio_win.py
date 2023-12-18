@@ -138,7 +138,7 @@ def _get_netkvmco_path(session):
         status, output = session.cmd_status_output(find_cmd)
         if status != 0:
             continue
-        netkvmco_path = netkvmco_path.strip().split("\n")[0]
+        netkvmco_path = output.strip().split("\n")[0]
         LOG.info("Found %s file at %s" % (file_type, netkvmco_path))
         return netkvmco_path
 

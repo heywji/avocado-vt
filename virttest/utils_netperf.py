@@ -453,9 +453,9 @@ class NetperfServer(Netperf):
         LOG.info("Start netserver ...")
         server_cmd = ""
         if self.client == "nc":
-            server_cmd += "start /b %s > null" % self.netserver_path
+            server_cmd += "start /b %s" % self.netserver_path
         else:
-            server_cmd = "%s > /dev/null" % self.netserver_path
+            server_cmd = "%s" % self.netserver_path
 
         if restart:
             self.stop()
@@ -603,25 +603,15 @@ class NetperfClient(Netperf):
         if package_sizes:
             for p_size in package_sizes.split():
                 cmd = netperf_cmd + " -- -m %s" % p_size
-                if self.client == "nc":
-                    cmd = "%s > null " % cmd
-                else:
-                    cmd = "%s > /dev/null" % cmd
-                txt = "Start %s sessions netperf background" % session_num
-                txt += " with cmd: '%s' " % cmd
-                LOG.info(txt)
+                # Removed automatic redirection to null to allow caller control
+                bg_char = "" if self.client == "nc" else "&"
                 for num in xrange(int(session_num)):
-                    self.session.cmd_output_safe("%s &" % cmd)
+                    self.session.cmd_output_safe("%s %s" % (cmd, bg_char))
         else:
-            if self.client == "nc":
-                netperf_cmd = "%s > null " % netperf_cmd
-            else:
-                netperf_cmd = "%s > /dev/null " % netperf_cmd
-            txt = "Start %s sessions netperf background" % session_num
-            txt += " with cmd: '%s' " % netperf_cmd
-            LOG.info(txt)
+            # Removed automatic redirection to null to allow caller control
+            bg_char = "" if self.client == "nc" else "&"
             for num in xrange(int(session_num)):
-                self.session.cmd_output_safe("%s &" % netperf_cmd)
+                self.session.cmd_output_safe("%s %s" % (netperf_cmd, bg_char))
 
     def is_netperf_running(self):
         return self.is_target_running(self.netperf_bin)
